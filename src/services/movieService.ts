@@ -16,14 +16,25 @@ const apiClient = axios.create({
   },
 });
 
-export const fetchMovies = async (query: string): Promise<Movie[]> => {
+export interface FetchMoviesResult {
+  results: Movie[];
+  totalPages: number;
+}
+
+export const fetchMovies = async (
+  query: string,
+  page: number = 1,
+): Promise<FetchMoviesResult> => {
   const response = await apiClient.get<TMDBResponse>("/search/movie", {
     params: {
       query,
       include_adult: false,
       language: "en-US",
-      page: 1,
+      page,
     },
   });
-  return response.data.results;
+  return {
+    results: response.data.results,
+    totalPages: response.data.total_pages,
+  };
 };
