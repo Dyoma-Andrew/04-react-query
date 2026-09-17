@@ -1,4 +1,5 @@
-import React, { useRef } from "react";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 import toast from "react-hot-toast";
 import css from "./SearchBar.module.css";
 
@@ -6,18 +7,19 @@ interface SearchBarProps {
   onSubmit: (query: string) => void;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
-  const formRef = useRef<HTMLFormElement>(null);
+interface FormValues {
+  query: string;
+}
 
-  const handleSubmit = (formData: FormData) => {
-    const query = (formData.get("query") as string)?.trim();
+const validationSchema = Yup.object().shape({
+  query: Yup.string().trim().required("Please enter your search query."),
+});
 
-    if (!query) {
-      toast.error("Будь ласка, введіть пошуковий запит!");
-      return;
-    }
+export default function SearchBar({ onSubmit }: SearchBarProps) {
+  const initialValues: FormValues = { query: "" };
 
-    onSubmit(query);
+  const handleSubmit = (values: FormValues) => {
+    onSubmit(values.query.trim());
   };
 
   return (
@@ -31,20 +33,39 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
         >
           Powered by TMDB
         </a>
-        <form ref={formRef} action={handleSubmit} className={css.form}>
-          <input
-            type="text"
-            name="query"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            className={css.input}
-          />
-          <button type="submit" className={css.button}>
-            Search
-          </button>
-        </form>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          validateOnChange={false}
+          validateOnBlur={false}
+          onSubmit={(values, actions) => {
+            handleSubmit(values);
+            actions.setSubmitting(false);
+          }}
+        >
+          {({ errors, touched, handleSubmit: formikSubmit }) => {
+            if (errors.query && touched.query) {
+              toast.error(errors.query);
+            }
+
+            return (
+              <Form className={css.form} onSubmit={formikSubmit}>
+                <Field
+                  className={css.input}
+                  type="text"
+                  name="query"
+                  autoComplete="off"
+                  placeholder="Search movies..."
+                  autoFocus
+                />
+                <button className={css.button} type="submit">
+                  Search
+                </button>
+              </Form>
+            );
+          }}
+        </Formik>
       </div>
     </header>
   );
-};
+}

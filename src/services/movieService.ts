@@ -5,6 +5,7 @@ export interface TMDBResponse {
   results: Movie[];
   total_pages: number;
   total_results: number;
+  page: number;
 }
 
 const TOKEN = import.meta.env.VITE_TMDB_TOKEN;
