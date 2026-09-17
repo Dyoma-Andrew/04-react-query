@@ -42,8 +42,8 @@ export default function App() {
     }
   }, [data, query]);
 
-  const handleSearch = async (query: string) => {
-    setQuery(query);
+  const handleSearch = (newQuery: string) => {
+    setQuery(newQuery);
     setPage(1);
   };
 
