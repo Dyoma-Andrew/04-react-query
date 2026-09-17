@@ -56,8 +56,6 @@ export default function App() {
         {isError && <ErrorMessage />}
         {!isLoading && !isError && movies.length > 0 && (
           <>
-            <MovieGrid movies={movies} onSelect={setSelectedMovie} />
-
             {totalPages > 1 && (
               <ReactPaginate
                 pageCount={totalPages}
@@ -71,6 +69,7 @@ export default function App() {
                 previousLabel="←"
               />
             )}
+            <MovieGrid movies={movies} onSelect={setSelectedMovie} />
           </>
         )}
       </main>
@@ -82,7 +81,7 @@ export default function App() {
         />
       )}
 
-      <Toaster position="top-right" />
+      <Toaster />
     </div>
   );
 }
